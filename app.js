@@ -8,14 +8,14 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
-var scores, roundScore, activePlayer, gamePlaying, sixOnDice, winningScore;
-
+var scores, roundScore, activePlayer, isActiveGame, winningScore;
+var config = {}
 
 init();
 
 
 document.querySelector('.btn-roll').addEventListener('click', function () {
-    if (gamePlaying) {
+    if (isActiveGame) {
 
         document.querySelector('.winning-score').classList.add('hide');
         var dice = Math.floor(Math.random() * 6) + 1;
@@ -70,13 +70,19 @@ function clicked() {
     document.querySelector('.winning-score').classList.add('hide');
     console.log(winningScore);
 }
-document.getElementById('winScoreBtn').addEventListener('click', clicked);
+function getInitialGameState () {
+    return {
+        scores, roundScore, activePlayer, isActiveGame, winningScore
+    };
+}
+function renderGame (config) {
 
+}
 function init() {
     scores = [0, 0];
     roundScore = 0;
     activePlayer = 0;
-    gamePlaying = true;
+    isActiveGame = true;
     previousOnDice = 0;
     document.querySelector('.dice').style.display = 'none';
     document.getElementById('score-0').textContent = '0';
@@ -92,11 +98,11 @@ function init() {
     document.querySelector('.player-0-panel').classList.add('active');
     document.querySelector('.player-1-panel').classList.remove('active');
     document.querySelector('.winning-score').classList.remove('hide');
-    
+    document.getElementById('winScoreBtn').addEventListener('click', clicked);
 }
 
 document.querySelector('.btn-hold').addEventListener('click', function () {
-    if (gamePlaying) {
+    if (isActiveGame) {
 
         scores[activePlayer] += roundScore;
 
@@ -106,7 +112,7 @@ document.querySelector('.btn-hold').addEventListener('click', function () {
             document.querySelector('.dice').style.display = 'none';
             document.querySelector('.player-' + activePlayer + '-panel').classList.add('winner');
             document.querySelector('.player-' + activePlayer + '-panel').classList.remove('active');
-            gamePlaying = false;
+            isActiveGame = false;
         } else {
             nextPlayer();
         }
