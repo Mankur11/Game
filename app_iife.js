@@ -1,12 +1,9 @@
 (function () {
     var initialGameState = {
-        scores: [0, 0],
-        roundScore: 0,
+        diceScores: [0, 0],
+        roundDiceScore: 0,
         activePlayer: 0,
         isActiveGame: true,
-        previousOnDice: 0,
-        isVisibleWinScoreInput: 'hide',
-        isVisibleDice: 'none',
         firstPlayerScore: 0,
         secondPlayerScore: 0,
         firstPlayerCurrent: 0,
@@ -15,10 +12,6 @@
         secondPlayerName: 'Player 2',
     };
     var gameState = {};
-
-    function addWinScoreInputClickListener() {}
-
-    function winScoreInputHide() {}
 
     function addStartNewGameClickListener() {}
 
@@ -44,15 +37,10 @@
         document.querySelector('.player-0-panel').classList.remove('active');
         document.querySelector('.player-0-panel').classList.add('active');
         document.querySelector('.player-1-panel').classList.remove('active');
-        document.querySelector('.winning-score').classList.remove('hide');
 
     }
 
     init(initialGameState);
-
-     addWinScoreInputClickListener(); 
-
-     winScoreInputHide(); 
 
      addStartNewGameClickListener(); 
 
