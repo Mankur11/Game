@@ -33,7 +33,6 @@ document.querySelector('.btn-roll').addEventListener('click', function () {
         if (previousOnDice === 2) {
             previousOnDice = 0;
             document.querySelector('#score-' + activePlayer).textContent = '0';
-            console.log('this shit happens');
             nextPlayer();
         }
 
