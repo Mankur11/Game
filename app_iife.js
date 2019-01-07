@@ -1,71 +1,75 @@
 (function () {
     var initialGameState = {
-        players: [{
-                name: 'player 1',
-                score: 0
-            },
-            {
-                name: 'player 2',
-                score: 0
-            }
-        ],
-
         currentDiceScore: 0,
         roundDiceScore: 0,
+        holdedDiceScoreArray: [],
         activePlayerIndex: 0,
         isActiveGame: true
     };
     var gameState = {};
 
-    function generatePlayers(playerNames) {
-        playerNames.map(function (playerName) {
+    function generatePlayers(playerNames) { // add player names and score to playernames array 
+        return playerNames.map(function (playerName) {
             return {
-                name: 'player 1',
-                score: 0
+                name: playerName,
+                score: 0,
+                activePlayerIndex:playerNames.indexOf(playerName)
             };
         });
     }
-    console.log(generatePlayers(['player 1','player 2']));
-    
 
-    // function addStartNewGameClickListener() {}
 
-    // function startNewGame() {}
+    function init(playerNames, winScore) { // expand initialGameState obj 
+        var gameState = Object.assign(initialGameState, { // with playernames array elements
+            players: generatePlayers(playerNames),
+            winScore: winScore
+        });
+        setGameState(gameState);
+    }
 
-    // function addRollDiceClickListener() {}
+    function setGameState(state) { // expand gameState obj 
+        gameState = Object.assign(gameState, state); // with properties from state
+    }
 
-    // function rollDice() {}
+    function getGameState() {
+        return gameState;
+    }
 
-    // function addHoldScoreClickListener() {}
+    function startNewGame() {
+        setGameState(initialGameState);
+        init(['player 1', 'player 2'], 100);
+    }
+    function addStartNewGameClickListener(){
+        document.querySelector('.btn-new').addEventListener('click', startNewGame);
+    }
 
-    // function holdScore() {}
 
-    // function init(config) {
-    //     document.getElementById('score-0').textContent = config.firstPlayerScore;
-    //     document.getElementById('score-1').textContent = config.secondPlayerScore;
-    //     document.getElementById('current-0').textContent = config.firstPlayerCurrent;
-    //     document.getElementById('current-1').textContent = config.secondPlayerCurrent;
-    //     document.getElementById('name-0').textContent = config.firstPlayerName;
-    //     document.getElementById('name-1').textContent = config.secondPlayerName;
-    //     document.querySelector('.player-0-panel').classList.remove('winner');
-    //     document.querySelector('.player-1-panel').classList.remove('winner');
-    //     document.querySelector('.player-0-panel').classList.remove('active');
-    //     document.querySelector('.player-0-panel').classList.add('active');
-    //     document.querySelector('.player-1-panel').classList.remove('active');
+    function rollDice() {
+        var generateRandomValueOfDice = Math.floor(Math.random() * 6) + 1;
+        setGameState({
+            currentDiceScore: generateRandomValueOfDice,
+            roundDiceScore: getGameState().roundDiceScore + randomValueOfDice
 
-    // }
+        })
+    }
+    function addRollDiceClickListener(){
+        document.querySelector('.btn-roll').addEventListener('click', rollDice);
+    }
 
-    // init(initialGameState);
+     function holdScore() {
+        holdedDiceScoreArray[activePlayerIndex] = roundDiceScore;
+        setGameState({
+            currentDiceScore: 0,
+            roundDiceScore: 0,
+            activePlayerIndex: 0
+        })
+     }
+     function addHoldScoreClickListener(){
+        document.querySelector('.btn-new').addEventListener('click', holdScore);
+    }
 
-    // addStartNewGameClickListener();
+     init(['player 1', 'player 2'], 100);
+     console.log(getGameState());
 
-    // startNewGame();
-
-    // addRollDiceClickListener();
-
-    // rollDice();
-
-    // addHoldScoreClickListener();
-
-    // holdScore();
+   
 })();
