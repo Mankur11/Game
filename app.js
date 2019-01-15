@@ -17,8 +17,9 @@
         });
     }
 
-    function getNextPlayerIndex(){
-        
+    function getNextPlayerIndex() {
+        var state = getGameState();
+        return state.players.length - 1 === state.activePlayerIndex ? 0 : state.activePlayerIndex + 1;
     }
 
     // return extended initialGameState object by generated players[] and winScore
@@ -50,9 +51,9 @@
     }
 
     function init() {
-        addStartNewGameClickListener(); 
+        addStartNewGameClickListener();
         addRollDiceClickListener();
-        addHoldScoreClickListener();      
+        addHoldScoreClickListener();
     }
 
     // expand gameState obj with properties from state
@@ -65,7 +66,7 @@
         getInitialGameState();
     }
 
-    function generateRandomValueOfDice(){
+    function generateRandomValueOfDice() {
         var generateRandomValueOfDice = Math.floor(Math.random() * 6) + 1;
     }
 
@@ -82,6 +83,7 @@
         setGameState({
             currentDiceScore: 0,
             roundDiceScore: 0,
+            activePlayerIndex: getNextPlayerIndex()
         })
     }
 
