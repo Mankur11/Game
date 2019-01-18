@@ -34,8 +34,20 @@
         return gameState;
     }
 
+    function renderRolledDice() {
+        var diceDOM = document.querySelector('.dice');
+        diceDOM.style.display = 'block';
+        diceDOM.src = 'dice-' + getRandomValueOfDice() + '.png';
+    }
+
+    function render(){
+        renderRolledDice();
+    }
+
     function setGameState(newGameState) {
         gameState = Object.assign(gameState, newGameState);
+        console.log(Object.assign({}, gameState));
+        render();
     }
 
     function addStartNewGameClickListener() {
@@ -47,34 +59,24 @@
     }
 
     function addHoldScoreClickListener() {
-        document.querySelector('.btn-new').addEventListener('click', holdScore);
-    }
-
-    function init() {
-        addStartNewGameClickListener();
-        addRollDiceClickListener();
-        addHoldScoreClickListener();
-    }
-
-    // expand gameState obj with properties from state
-    function generateInitialGameState(state) {
-        gameState = Object.assign(gameState, state);
+        document.querySelector('.btn-hold').addEventListener('click', holdScore);
     }
 
     function startNewGame() {
-        generateInitialGameState(['player 1', 'player 2'], 100);
-        getInitialGameState();
+        setGameState(
+            generateInitialGameState(['player 1', 'player 2'], 100)
+        );
     }
 
-    function generateRandomValueOfDice() {
-        var generateRandomValueOfDice = Math.floor(Math.random() * 6) + 1;
+    function getRandomValueOfDice() {
+        return Math.floor(Math.random() * 6) + 1;
     }
 
     function rollDice() {
-        generateRandomValueOfDice();
+        var currentDiceScore = getRandomValueOfDice();
         setGameState({
-            currentDiceScore: generateRandomValueOfDice,
-            roundDiceScore: getGameState().roundDiceScore + randomValueOfDice
+            currentDiceScore: currentDiceScore,
+            roundDiceScore: getGameState().roundDiceScore + currentDiceScore
         })
     }
 
@@ -87,6 +89,14 @@
         })
     }
 
+    function init() {
+        startNewGame();
+        addStartNewGameClickListener();
+        addRollDiceClickListener();
+        addHoldScoreClickListener();
+        rollDice();
+        rollDice();
+    }
+
     init();
-    console.log(getInitialGameState());
 })();
