@@ -35,18 +35,18 @@
     }
 
     function renderRolledDice() {
-        var diceDOM = document.querySelector('.dice');
-        diceDOM.style.display = 'block';
-        diceDOM.src = 'dice-' + getRandomValueOfDice() + '.png';
+            getGameState().diceDOM = document.querySelector('.dice');
+            getGameState().diceDOMStyleDisplay = 'block';
+            getGameState().diceDOMSrc = 'dice-' + getRandomValueOfDice() + '.png';
+            console.log(getGameState());
     }
-
-    function render(){
+    
+    function render() {
         renderRolledDice();
     }
 
     function setGameState(newGameState) {
         gameState = Object.assign(gameState, newGameState);
-        console.log(Object.assign({}, gameState));
         render();
     }
 
