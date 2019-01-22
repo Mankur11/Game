@@ -77,7 +77,7 @@
     function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
-            if (checkScoreWinning(player.score, state.winScore)) {
+            if (isGameFinished(player.score, state.winScore)) {
                 document.querySelector('#name-' + index).textContent = 'Winner!';
                 document.querySelector('.player-' + index + '-panel').classList.add('winner');                        
             } else {
@@ -94,7 +94,7 @@
         })
     }
 
-    function checkScoreWinning(playerScore, stateWinScore) {
+    function isGameFinished(playerScore, stateWinScore) {
         if (playerScore >= stateWinScore) {
             return true;
         }
