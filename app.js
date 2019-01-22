@@ -39,13 +39,14 @@
     }
 
     function nextPlayer(){
-        var state = getGameState();
-        state.activePlayerIndex = getNextActivePlayerIndex();
+        var nextActivePlayerIndex = getNextActivePlayerIndex();
+        setGameState({
+        activePlayerIndex : nextActivePlayerIndex
+        })
     }
 
     function render() {
         renderPlayerScore();
-        renderCurrentPlayerScore();
         renderRolledDice();
     }
 
@@ -75,23 +76,13 @@
 
     function renderPlayerScore() {
         var state = getGameState();
+        var currentScore = state.players[state.activePlayerIndex].score;
         if (state.isActiveGame) {
             document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
-        } else {
-            state.players.map(function (player, index) {
-                document.getElementById('score-' + index).textContent = '0';
-            });
-        }
-    }
-
-    function renderCurrentPlayerScore() {
-        var state = getGameState();
-        var currentScore = state.players[state.activePlayerIndex].score;
-        console.log(state);
-        if (state.isActiveGame) {
             document.getElementById('current-' + state.activePlayerIndex).textContent = currentScore;
         } else {
             state.players.map(function (player, index) {
+                document.getElementById('score-' + index).textContent = '0';
                 document.getElementById('current-' + index).textContent = '0';
             });
         }
