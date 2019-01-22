@@ -1,136 +1,158 @@
 (function () {
-        var initialGameState = {
-            currentDiceScore: 0,
-            roundDiceScore: 0,
-            activePlayerIndex: 0,
-            isActiveGame: false
-        };
+    var initialGameState = {
+        currentDiceScore: 0,
+        roundDiceScore: 0,
+        activePlayerIndex: 0,
+        isActiveGame: false
+    };
 
-        var gameState = {};
+    var gameState = {};
 
-        function getGameState() {
-            return gameState;
+    function getGameState() {
+        return gameState;
+    }
+
+    function generateInitialGameState(playerNames, winScore) {
+        return Object.assign(initialGameState, {
+            players: generatePlayers(playerNames),
+            winScore: winScore
+        });
+    }
+
+    function setGameState(newGameState) {
+        gameState = Object.assign(gameState, newGameState);
+        render();
+    }
+
+    function generatePlayers(playerNames) {
+        return playerNames.map(function (playerName) {
+            return {
+                name: playerName,
+                score: 0
+            };
+        });
+    }
+
+    function getNextActivePlayerIndex() {
+        var state = getGameState();
+        return state.players.length - 1 === state.activePlayerIndex ? 0 : state.activePlayerIndex + 1;
+    }
+
+    function nextPlayer() {
+        setGameState({
+            activePlayerIndex: getNextActivePlayerIndex()
+        })
+    }
+
+    function render() {
+        renderPlayersNames()
+        renderPlayersScore();
+        renderRolledDice();
+        checkScoreWinning();
+    }
+
+    function renderPlayersNames() {
+        var state = getGameState();
+        state.players.map(function (player, index) { 
+                document.querySelector('#name-' + index).textContent = player.name;
+                document.querySelector('.player-' + index + '-panel').classList.remove('winner');  
+        })
+    }
+
+    function renderRolledDice() {
+        var diceDOM = document.querySelector('.dice');
+        var state = getGameState();
+        if (state.isActiveGame && state.currentDiceScore > 0) {
+            diceDOM.style.display = 'block';
+            diceDOM.src = 'dice-' + state.currentDiceScore + '.png';
+        } else {
+            diceDOM.style.display = 'none';
         }
+    }
 
-        function generateInitialGameState(playerNames, winScore) {
-            return Object.assign(initialGameState, {
-                players: generatePlayers(playerNames),
-                winScore: winScore
-            });
-        }
+    function getRandomValueOfDice() {
+        return Math.floor(Math.random() * 6) + 1;
+    }
 
-        function setGameState(newGameState) {
-            gameState = Object.assign(gameState, newGameState);
-            render();
-        }
+    function rollDice() {
+        var currentDiceScore = getRandomValueOfDice();
+        setGameState({
+            currentDiceScore: currentDiceScore,
+            roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
+            isActiveGame: true
+        })
+    }
 
-        function generatePlayers(playerNames) {
-            return playerNames.map(function (playerName) {
-                return {
-                    name: playerName,
-                    score: 0
-                };
-            });
-        }
-
-        function getNextActivePlayerIndex() {
-            var state = getGameState();
-            return state.players.length - 1 === state.activePlayerIndex ? 0 : state.activePlayerIndex + 1;
-        }
-
-        function nextPlayer() {
-            setGameState({
-                activePlayerIndex: getNextActivePlayerIndex()
-            })
-        }
-
-        function render() {
-            renderPlayersScore();
-            renderRolledDice();
-        }
-
-        function renderRolledDice() {
-            var diceDOM = document.querySelector('.dice');
-            var state = getGameState();
-            if (state.isActiveGame && state.currentDiceScore > 0) {
-                diceDOM.style.display = 'block';
-                diceDOM.src = 'dice-' + state.currentDiceScore + '.png';
+    function renderPlayersScore() {
+        var state = getGameState();
+        state.players.map(function (player, index) {
+            if (state.isActiveGame) {
+                document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
+                document.getElementById('current-' + index).textContent = player.score;
             } else {
-                diceDOM.style.display = 'none';
+                document.getElementById('score-' + index).textContent = '0';
+                document.getElementById('current-' + index).textContent = '0';
             }
-        }
+        })
+    }
 
-        function getRandomValueOfDice() {
-            return Math.floor(Math.random() * 6) + 1;
-        }
-
-        function rollDice() {
-            var currentDiceScore = getRandomValueOfDice();
-            setGameState({
-                currentDiceScore: currentDiceScore,
-                roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
-                isActiveGame: true
-            })
-        }
-
-        function renderPlayersScore() {
-            var state = getGameState();
-            var currentScore = state.players[state.activePlayerIndex].score;
-            state.players.map(function (player, index) {
-                    if (state.isActiveGame) {
-                        document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
-                        document.getElementById('current-' + state.activePlayerIndex).textContent = currentScore;
-                    } else {
-                        document.getElementById('score-' + index).textContent = '0';
-                        document.getElementById('current-' + index).textContent = '0';
-                    }
-                })
+    function checkScoreWinning() {
+        var state = getGameState();
+        state.players.map(function (player, index) {
+            if (player.score >= state.winScore) {
+                document.querySelector('#name-' + index).textContent = 'Winner!';
+                document.querySelector('.dice').style.display = 'none';
+                document.querySelector('.player-' + index + '-panel').classList.add('winner');
+                gamePlaying = false;
             }
+        })
+    }
 
-            function startNewGame() {
-                setGameState(
-                    generateInitialGameState(['player 1', 'player 2'], 100)
-                );
+    function startNewGame() {
+        setGameState(
+            generateInitialGameState(['player 1', 'player 2'], 20)
+        );
+    }
+
+    function holdScore() {
+        var state = getGameState();
+        var newPlayers = state.players.map(function (player, index) {
+            if (index === state.activePlayerIndex) {
+                var newScore = player.score + state.roundDiceScore;
+                return {
+                    name: player.name,
+                    score: newScore
+                }
             }
+            return player;
+        })
+        console.log(newPlayers);
+        setGameState({
+            players: newPlayers,
+            currentDiceScore: 0,
+            roundDiceScore: 0
+        });
+        nextPlayer();
+    }
 
-            function holdScore() {
-                var state = getGameState();
-                var newPlayers = state.players.map(function (player, index) {
-                    if (index === state.activePlayerIndex) {
-                        var newScore = player.score + state.roundDiceScore;
-                        return {
-                            name: player.name,
-                            score: newScore
-                        }
-                    }
-                    return player;
-                })
-                setGameState({
-                    players: newPlayers,
-                    currentDiceScore: 0,
-                    roundDiceScore: 0
-                });
-                nextPlayer();
-            }
+    function addStartNewGameClickListener() {
+        document.querySelector('.btn-new').addEventListener('click', startNewGame);
+    }
 
-            function addStartNewGameClickListener() {
-                document.querySelector('.btn-new').addEventListener('click', startNewGame);
-            }
+    function addRollDiceClickListener() {
+        document.querySelector('.btn-roll').addEventListener('click', rollDice);
+    }
 
-            function addRollDiceClickListener() {
-                document.querySelector('.btn-roll').addEventListener('click', rollDice);
-            }
+    function addHoldScoreClickListener() {
+        document.querySelector('.btn-hold').addEventListener('click', holdScore);
+    }
 
-            function addHoldScoreClickListener() {
-                document.querySelector('.btn-hold').addEventListener('click', holdScore);
-            }
+    function init() {
+        startNewGame();
+        addStartNewGameClickListener();
+        addRollDiceClickListener();
+        addHoldScoreClickListener();
+    }
 
-            function init() {
-                startNewGame();
-                addStartNewGameClickListener();
-                addRollDiceClickListener();
-                addHoldScoreClickListener();
-            }
-
-            init();
-        })();
+    init();
+})();
