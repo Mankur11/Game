@@ -45,18 +45,9 @@
     }
 
     function render() {
-        renderPlayersNames()
-        renderPlayersScore();
+        renderPlayers();
         renderRolledDice();
         checkScoreWinning();
-    }
-
-    function renderPlayersNames() {
-        var state = getGameState();
-        state.players.map(function (player, index) { 
-                document.querySelector('#name-' + index).textContent = player.name;
-                document.querySelector('.player-' + index + '-panel').classList.remove('winner');  
-        })
     }
 
     function renderRolledDice() {
@@ -83,9 +74,16 @@
         })
     }
 
-    function renderPlayersScore() {
+    function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
+            if (checkScoreWinning(player.score, state.winScore)) {
+                document.querySelector('#name-' + index).textContent = 'Winner!';
+                document.querySelector('.player-' + index + '-panel').classList.add('winner');                        
+            } else {
+                document.querySelector('#name-' + index).textContent = player.name;
+                document.querySelector('.player-' + index + '-panel').classList.remove('winner');
+            }
             if (state.isActiveGame) {
                 document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
                 document.getElementById('current-' + index).textContent = player.score;
@@ -96,16 +94,10 @@
         })
     }
 
-    function checkScoreWinning() {
-        var state = getGameState();
-        state.players.map(function (player, index) {
-            if (player.score >= state.winScore) {
-                document.querySelector('#name-' + index).textContent = 'Winner!';
-                document.querySelector('.dice').style.display = 'none';
-                document.querySelector('.player-' + index + '-panel').classList.add('winner');
-                gamePlaying = false;
-            }
-        })
+    function checkScoreWinning(playerScore, stateWinScore) {
+        if (playerScore >= stateWinScore) {
+            return true;
+        }
     }
 
     function startNewGame() {
