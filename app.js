@@ -77,33 +77,30 @@
     function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
-            var winnerClass = document.querySelector('.player-' + index + '-panel').classList;
             if (isActiveGame()) {
-                player.name = 'Winner';
-                winnerClass.add('winner');
+                document.querySelector('#name-' + index).textContent = 'Winner!';
+                document.querySelector('.player-' + index + '-panel').classList.add('winner');
+                nextPlayer();
             }
-            document.querySelector('#name-' + index).textContent = player.name;
-            winnerClass.remove('winner');
-            if (state.isActiveGame) {
+            if (state.isActiveGame && !isActiveGame()) {
                 document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
                 document.getElementById('current-' + index).textContent = player.score;
             } else {
                 document.getElementById('score-' + index).textContent = '0';
                 document.getElementById('current-' + index).textContent = '0';
+                document.querySelector('#name-' + index).textContent = player.name;
+                document.querySelector('.player-' + index + '-panel').classList.remove('winner');
             }
         })
     }
 
     function isActiveGame() {
         var state = getGameState();
-        var isWinner = state.players.map(function (player, index) {
-            if (index === state.activePlayerIndex && player.score >= state.winScore) {
-                return true
-            }
-        })
-        return isWinner
+        if (state.players[state.activePlayerIndex].score >= state.winScore) {
+            return true;
+        }
+        return false;
     }
-
 
     function startNewGame() {
         setGameState(
