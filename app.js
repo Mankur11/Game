@@ -45,18 +45,9 @@
     }
 
     function render() {
-        renderPlayersNames()
-        renderPlayersScore();
+        renderPlayers();
         renderRolledDice();
-        checkScoreWinning();
-    }
-
-    function renderPlayersNames() {
-        var state = getGameState();
-        state.players.map(function (player, index) { 
-                document.querySelector('#name-' + index).textContent = player.name;
-                document.querySelector('.player-' + index + '-panel').classList.remove('winner');  
-        })
+        isActiveGame();
     }
 
     function renderRolledDice() {
@@ -83,9 +74,16 @@
         })
     }
 
-    function renderPlayersScore() {
+    function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
+            var winnerClass = document.querySelector('.player-' + index + '-panel').classList;
+            if (isActiveGame()) {
+                player.name = 'Winner';
+                winnerClass.add('winner');
+            }
+            document.querySelector('#name-' + index).textContent = player.name;
+            winnerClass.remove('winner');
             if (state.isActiveGame) {
                 document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
                 document.getElementById('current-' + index).textContent = player.score;
@@ -96,17 +94,16 @@
         })
     }
 
-    function checkScoreWinning() {
+    function isActiveGame() {
         var state = getGameState();
-        state.players.map(function (player, index) {
-            if (player.score >= state.winScore) {
-                document.querySelector('#name-' + index).textContent = 'Winner!';
-                document.querySelector('.dice').style.display = 'none';
-                document.querySelector('.player-' + index + '-panel').classList.add('winner');
-                gamePlaying = false;
+        var isWinner = state.players.map(function (player, index) {
+            if (index === state.activePlayerIndex && player.score >= state.winScore) {
+                return true
             }
         })
+        return isWinner
     }
+
 
     function startNewGame() {
         setGameState(
@@ -126,7 +123,6 @@
             }
             return player;
         })
-        console.log(newPlayers);
         setGameState({
             players: newPlayers,
             currentDiceScore: 0,
