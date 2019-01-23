@@ -3,7 +3,7 @@
         currentDiceScore: 0,
         roundDiceScore: 0,
         activePlayerIndex: 0,
-        isActiveGame: false
+        isActiveGame: true
     };
 
     var gameState = {};
@@ -47,7 +47,6 @@
     function render() {
         renderPlayers();
         renderRolledDice();
-        checkScoreWinning();
     }
 
     function renderRolledDice() {
@@ -77,27 +76,32 @@
     function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
-            if (isGameFinished(player.score, state.winScore)) {
+            if (isWinner(player)) {
                 document.querySelector('#name-' + index).textContent = 'Winner!';
-                document.querySelector('.player-' + index + '-panel').classList.add('winner');                        
+                document.querySelector('.player-' + index + '-panel').classList.add('winner');
             } else {
                 document.querySelector('#name-' + index).textContent = player.name;
                 document.querySelector('.player-' + index + '-panel').classList.remove('winner');
-            }
-            if (state.isActiveGame) {
-                document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
                 document.getElementById('current-' + index).textContent = player.score;
-            } else {
                 document.getElementById('score-' + index).textContent = '0';
-                document.getElementById('current-' + index).textContent = '0';
             }
         })
+        document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
     }
 
-    function isGameFinished(playerScore, stateWinScore) {
-        if (playerScore >= stateWinScore) {
-            return true;
+    function isWinner(player) {
+        var state = getGameState();
+        var activePlayer = state.players[state.activePlayerIndex];
+        return !isActiveGame() && activePlayer.name === player.name;
+    }
+
+    function isActiveGame() {
+        var state = getGameState();
+        var activePlayer = state.players[state.activePlayerIndex];
+        if (activePlayer.score >= state.winScore) {
+            return false;
         }
+        return true;
     }
 
     function startNewGame() {
@@ -117,12 +121,14 @@
                 }
             }
             return player;
-        })
-        console.log(newPlayers);
+        });
         setGameState({
             players: newPlayers,
             currentDiceScore: 0,
-            roundDiceScore: 0
+            roundDiceScore: 0  
+        });
+        setGameState({  
+            isActiveGame: isActiveGame() 
         });
         nextPlayer();
     }
