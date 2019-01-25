@@ -3,7 +3,8 @@
         currentDiceScore: 0,
         roundDiceScore: 0,
         activePlayerIndex: 0,
-        isActiveGame: false
+        winnerPlayerIndex: null,
+        isActiveGame: true
     };
 
     var gameState = {};
@@ -40,14 +41,15 @@
 
     function nextPlayer() {
         setGameState({
-            activePlayerIndex: getNextActivePlayerIndex()
+            activePlayerIndex: getNextActivePlayerIndex(),
+            currentDiceScore: 0,
+            roundDiceScore: 0
         })
     }
 
     function render() {
         renderPlayers();
         renderRolledDice();
-        isGameFinished();
     }
 
     function renderRolledDice() {
@@ -77,26 +79,29 @@
     function renderPlayers() {
         var state = getGameState();
         state.players.map(function (player, index) {
-            if (isGameFinished()) {
+            if (state.isActiveGame) {
+                document.querySelector('#name-' + index).textContent = player.name;
+                document.querySelector('.player-' + index + '-panel').classList.remove('winner');
+                document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
+                document.getElementById('current-' + index).textContent = player.score;
+            } else if (index === state.winnerPlayerIndex) {
                 document.querySelector('#name-' + index).textContent = 'Winner!';
                 document.querySelector('.player-' + index + '-panel').classList.add('winner');
             }
-            if (state.isActiveGame && !isGameFinished()) {
-                document.getElementById('score-' + state.activePlayerIndex).textContent = state.roundDiceScore;
-                document.getElementById('current-' + index).textContent = player.score;
+
+            if (index === state.activePlayerIndex) {
+                document.getElementById('score-' + index).textContent = state.roundDiceScore;
             } else {
                 document.getElementById('score-' + index).textContent = '0';
-                document.getElementById('current-' + index).textContent = '0';
-                document.querySelector('#name-' + index).textContent = player.name;
-                document.querySelector('.player-' + index + '-panel').classList.remove('winner');
             }
+            
+            document.getElementById('current-' + index).textContent = player.score;
         })
     }
 
     function isGameFinished() {
         var state = getGameState();
         if (state.players[state.activePlayerIndex].score >= state.winScore) {
-            nextPlayer();
             return true;
         }
         return false;
@@ -122,10 +127,15 @@
         })
         setGameState({
             players: newPlayers,
-            currentDiceScore: 0,
-            roundDiceScore: 0
         });
-        nextPlayer();
+        if (isGameFinished()) {
+            setGameState({
+                isActiveGame: false,
+                winnerPlayerIndex: state.activePlayerIndex
+            })
+        } else {
+            nextPlayer();
+        }
     }
 
     function addStartNewGameClickListener() {
