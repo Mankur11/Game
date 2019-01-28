@@ -67,13 +67,21 @@
         return Math.floor(Math.random() * 6) + 1;
     }
 
+    function isOnePointRolledOnDice() {
+        var state = getGameState();
+        if (state.currentDiceScore === 1) {
+            nextPlayer();
+        }
+    }
+
     function rollDice() {
         var currentDiceScore = getRandomValueOfDice();
         setGameState({
             currentDiceScore: currentDiceScore,
             roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
             isActiveGame: true
-        })
+        });
+        isOnePointRolledOnDice();
     }
 
     function renderPlayers() {
@@ -94,7 +102,7 @@
             } else {
                 document.getElementById('score-' + index).textContent = '0';
             }
-            
+
             document.getElementById('current-' + index).textContent = player.score;
         })
     }
