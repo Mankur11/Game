@@ -103,8 +103,10 @@
 
             if (index === state.activePlayerIndex) {
                 document.getElementById('score-' + index).textContent = state.roundDiceScore;
+                document.querySelector('.player-' + index + '-panel').classList.add('active');
             } else {
                 document.getElementById('score-' + index).textContent = '0';
+                document.querySelector('.player-' + index + '-panel').classList.remove('active');
             }
 
             document.getElementById('current-' + index).textContent = player.score;
