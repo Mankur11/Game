@@ -67,11 +67,13 @@
         return Math.floor(Math.random() * 6) + 1;
     }
 
+    // if the player rolls a 1, all his round score gets lost. after that, it's the next player's turn
     function isOnePointRolledOnDice() {
         var state = getGameState();
         if (state.currentDiceScore === 1) {
-            nextPlayer();
+            return true;
         }
+        return false;
     }
 
     function rollDice() {
@@ -81,7 +83,9 @@
             roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
             isActiveGame: true
         });
-        isOnePointRolledOnDice();
+        if (isOnePointRolledOnDice()){
+            nextPlayer();
+        }
     }
 
     function renderPlayers() {
