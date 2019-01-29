@@ -43,7 +43,8 @@
         setGameState({
             activePlayerIndex: getNextActivePlayerIndex(),
             currentDiceScore: 0,
-            roundDiceScore: 0
+            roundDiceScore: 0,
+            isOnePointRolledOnDice: false
         })
     }
 
@@ -69,22 +70,31 @@
 
     // if the player rolls a 1, all his round score gets lost. after that, it's the next player's turn
     function isOnePointRolledOnDice() {
-        var state = getGameState();
-        if (state.currentDiceScore === 1) {
-            return true;
-        }
-        return false;
+        return getGameState().currentDiceScore === 1;
     }
 
     function rollDice() {
         var currentDiceScore = getRandomValueOfDice();
+        var state = getGameState();
         setGameState({
             currentDiceScore: currentDiceScore,
             roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
             isActiveGame: true
         });
-        if (isOnePointRolledOnDice()){
-            nextPlayer();
+
+        if (isOnePointRolledOnDice()) {
+            setGameState({
+                isOnePointRolledOnDice: true,
+                isActiveGame: false
+            });
+            console.log(getGameState());
+            setTimeout(nextPlayer, 2000);
+        } else {
+            setGameState({
+                isOnePointRolledOnDice: false,
+                isActiveGame: true
+            });
+            console.log(getGameState());
         }
     }
 
@@ -107,6 +117,13 @@
             } else {
                 document.getElementById('score-' + index).textContent = '0';
                 document.querySelector('.player-' + index + '-panel').classList.remove('active');
+            }
+
+            if (state.isOnePointRolledOnDice) {
+                document.querySelector('.rolled-one').classList.add('rolled-one-message');
+                document.querySelector('.rolled-one').textContent = 'player-' + index + ' rolled 1';
+            } else {
+                document.querySelector('.rolled-one').classList.remove('rolled-one-message');
             }
 
             document.getElementById('current-' + index).textContent = player.score;
