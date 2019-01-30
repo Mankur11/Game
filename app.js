@@ -82,14 +82,10 @@
         });
 
         if (isOnePointRolledOnDice()) {
-            setGameState({
-                isOnePointRolledOnDice: true
-            });
-            setTimeout(nextPlayer, 2000);   
+            setGameState({isOnePointRolledOnDice: true});
+            setTimeout(nextPlayer, 1000);
         } else {
-            setGameState({
-                isOnePointRolledOnDice: false
-            });
+            setGameState({isOnePointRolledOnDice: false});
         }
     }
 
