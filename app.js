@@ -93,11 +93,11 @@
         }
     }
 
-    function renderPlayerRolledOneOnDice(index) {
+    function renderPlayerRolledOneOnDice() {
         var state = getGameState();
         if (state.isOnePointRolledOnDice) {
             document.querySelector('.rolled-one').classList.add('rolled-one-message');
-            document.querySelector('.rolled-one').textContent = 'player-' + index + ' rolled 1';
+            document.querySelector('.rolled-one').textContent = 'player-' + (state.activePlayerIndex + 1) + ' rolled 1';
         } else {
             document.querySelector('.rolled-one').classList.remove('rolled-one-message');
         }
@@ -126,7 +126,7 @@
 
             document.getElementById('current-' + index).textContent = player.score;
         })
-        renderPlayerRolledOneOnDice(state.activePlayerIndex + 1);
+        renderPlayerRolledOneOnDice();
     }
 
     function isGameFinished() {
