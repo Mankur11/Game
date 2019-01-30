@@ -43,7 +43,8 @@
         setGameState({
             activePlayerIndex: getNextActivePlayerIndex(),
             currentDiceScore: 0,
-            roundDiceScore: 0
+            roundDiceScore: 0,
+            isOnePointRolledOnDice: false
         })
     }
 
@@ -67,13 +68,35 @@
         return Math.floor(Math.random() * 6) + 1;
     }
 
+    function isOnePointRolledOnDice() {
+        return getGameState().currentDiceScore === 1;
+    }
+
     function rollDice() {
         var currentDiceScore = getRandomValueOfDice();
+        var state = getGameState();
         setGameState({
             currentDiceScore: currentDiceScore,
             roundDiceScore: getGameState().roundDiceScore + currentDiceScore,
             isActiveGame: true
-        })
+        });
+
+        if (isOnePointRolledOnDice()) {
+            setGameState({isOnePointRolledOnDice: true});
+            setTimeout(nextPlayer, 1000);
+        } else {
+            setGameState({isOnePointRolledOnDice: false});
+        }
+    }
+
+    function renderPlayerRolledOneOnDice() {
+        var state = getGameState();
+        if (state.isOnePointRolledOnDice) {
+            document.querySelector('.rolled-one').classList.add('rolled-one-message');
+            document.querySelector('.rolled-one').textContent = 'player-' + (state.activePlayerIndex + 1) + ' rolled 1';
+        } else {
+            document.querySelector('.rolled-one').classList.remove('rolled-one-message');
+        }
     }
 
     function renderPlayers() {
@@ -91,12 +114,15 @@
 
             if (index === state.activePlayerIndex) {
                 document.getElementById('score-' + index).textContent = state.roundDiceScore;
+                document.querySelector('.player-' + index + '-panel').classList.add('active');
             } else {
                 document.getElementById('score-' + index).textContent = '0';
+                document.querySelector('.player-' + index + '-panel').classList.remove('active');
             }
-            
+
             document.getElementById('current-' + index).textContent = player.score;
         })
+        renderPlayerRolledOneOnDice();
     }
 
     function isGameFinished() {

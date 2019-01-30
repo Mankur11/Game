@@ -65,7 +65,7 @@ body {
 *** PLAYERS
 **********************************************/
 
-.player-name {
+.player-name, .rolled-one {
     font-size: 40px;
     text-align: center;
     text-transform: uppercase;
@@ -74,6 +74,20 @@ body {
     margin-top: 20px;
     margin-bottom: 10px;
     position: relative;
+}
+
+
+.rolled-one {
+    font-size: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 100;
+    position: absolute;
+    left: 40%;
+    display: none;
+    top: 65px;
+  
 }
 
 .player-score {
@@ -182,8 +196,14 @@ i {
     box-shadow: 0px 10px 60px rgba(0, 0, 0, 0.10);
 }
 
+
 .winner {
     background-color: #f7f7f7;
+}
+
+.rolled-one-message {
+    display: inline-block;
+    color: #EB4D4D;
 }
 
 .winner .player-name {
